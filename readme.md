@@ -6,7 +6,7 @@ IT IS IN AN ALPHA VERSION, THERE ARE MANY CRASHES AND BUGS!
 # General Info
 I'm not a pro python programer so expect some bugs and crashes. I hope 
 some of you want to contribute to the project.
-------------------------------------------------------------------------
+
 
 # TO-DOs
 ARPPOISONING: 1.) Implement functionality with SSL (port 443) and SSLSTRIP
@@ -19,13 +19,13 @@ SSLSTRIP:   1.) Improvement in stability
 
 Overall better performance. Like shutting down running thread and reopening
 ports after the program closed.
-------------------------------------------------------------------------
+
 
 # Description
 This is a man in the middle proxy. It is used to capture traffic
 between computer without the knowing of them.
 
-------------------------------------------------------------------------
+
 # Functions
 REDIRECTER  => redirect every request to a given webpage or to your
 			   own HTML code.
@@ -41,7 +41,7 @@ ARPPOISONER => Infects the network, so that the traffic of a given victim
 SSLSTRIP    => Strip the secure HTTPS connections to a HTTP connection. Atm not supported
                with ARPPOISONING!
 
-------------------------------------------------------------------------
+
 # How-To
 To start the proxy you need to modify the config.json. You can create
 new config files for your needs.
