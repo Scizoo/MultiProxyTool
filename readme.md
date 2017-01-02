@@ -6,8 +6,21 @@ IT IS IN AN ALPHA VERSION, THERE ARE MANY CRASHES AND BUGS!
 # General Info
 I'm not a pro python programer so expect some bugs and crashes. I hope 
 some of you want to contribute to the project.
-
 ------------------------------------------------------------------------
+
+# TO-DOs
+ARPPOISONING: 1.) Implement functionality with SSL (port 443) and SSLSTRIP
+
+JSINJECTOR: 1.) A more reliable method to inject code dynamically.
+            2.) Some more premade scripts.
+
+SSLSTRIP:   1.) Improvement in stability
+            
+
+Overall better performance. Like shutting down running thread and reopening
+ports after the program closed.
+------------------------------------------------------------------------
+
 # Description
 This is a man in the middle proxy. It is used to capture traffic
 between computer without the knowing of them.
