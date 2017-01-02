@@ -140,4 +140,4 @@ class ARPPoisoning(Thread):
 
         print "[*] Resetting iptables..."
         self.resetIptables()
-        print "[*] Done!"
+        print "[*] ARP shutdown correctly!"

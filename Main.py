@@ -48,13 +48,18 @@ class ServerThread(threading.Thread):
                 break
 
         print "Waiting for threads to shutdown correct"
-        [t.join() for t in clients]
+        [t.stop() for t in clients]
+        #[t.join() for t in clients]
         print "Done! Thank you"
-        self.server.close()
+        #self.server.close()
+
 
     def stop(self):
         self.isRunning = False
         self._stop.set()
+        self.server.shutdown(socket.SHUT_RDWR)
+        #self.server.close()
+
 
 
 
