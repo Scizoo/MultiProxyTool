@@ -2,7 +2,7 @@
     "proxy":{
       "ip":"192.168.1.108",
       "portHTTP":"8080",
-      "portSSL":"8080"
+      "portSSL":"8433"
     },
     "features":{
       "http10":"1",
@@ -14,7 +14,7 @@
       "arp":"0",
       "redirectto":"0",
       "redirectown":"0",
-      "formstealer":"1",
+      "formstealer":"0",
       "sslstrip":"0"
       }
 }

