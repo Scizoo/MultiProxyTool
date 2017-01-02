@@ -19,7 +19,8 @@ REDIRECTER  => redirect every request to a given webpage or to your
 			  
 JSINJECTOR  => injects javascript into the html code. Formstealer is one
 			   preset script which can steal username and password and
-			   send it to your database
+			   send it to your database. The formstealer is very buggy
+			   at the moment, so use it at your own risk.
 			  
 ARPPOISONER => Infects the network, so that the traffic of a given victim
 			   is redirected to the proxy. (only http atm)
