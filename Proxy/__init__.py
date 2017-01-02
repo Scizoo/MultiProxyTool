@@ -16,6 +16,9 @@ class Client(Thread):
         self._tools = tools
         self._js = JSInjector()
         self._redirecter = Redirecter()
+        self._redirectto = 0
+        self._redirectown = 0
+        self._formstealer = 0
         self.FunctionSetup(config)
 
     def run(self):

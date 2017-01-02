@@ -56,8 +56,8 @@ class ARPPoisoning(Thread):
             self.iptableConfig()
 
             print "[*] Summary"
-            print " /  Victims IP/MAC: " + str(self._victim_ip) + "/" + str(self._victimMAC)
-            print " /  Routers IP/MAC: " + str(self._router_ip) + "/" + str(self._routerMAC)
+            print " /  Victims IP / MAC: " + str(self._victim_ip) + " / " + str(self._victimMAC)
+            print " /  Routers IP / MAC: " + str(self._router_ip) + " / " + str(self._routerMAC)
             print " /  HTTP Forward: " + str(self._ports[0])
             if len(self._ports) >= 2:
                 print " /  SSL  Forward: " + str(self._ports[1])

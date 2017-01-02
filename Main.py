@@ -136,6 +136,7 @@ if __name__ == '__main__':
     # Test config parse
     cp = ConfigParser(sys.argv[1])
     config = cp.parseConfigFile()
+    cp.printConfiguration()
     # ----------------------- #
     try:
         arp_flag = int(config["functions"]["arp"])

