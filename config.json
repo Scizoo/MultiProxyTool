@@ -1,0 +1,20 @@
+{
+    "proxy":{
+      "ip":"192.168.1.108",
+      "portHTTP":"8080",
+      "portSSL":"8080"
+    },
+    "features":{
+      "http10":"1",
+      "encoding":"1",
+      "nocookies":"0",
+      "favicon":"0"
+    },
+    "functions":{
+      "arp":"1",
+      "redirectto":"0",
+      "redirectown":"0",
+      "formstealer":"0",
+      "sslstrip":"0"
+      }
+}
