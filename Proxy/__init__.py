@@ -50,7 +50,7 @@ class Client(threading.Thread):
         self._stop.set()
         if self._fsocket:
             self._fsocket.close()
-        self._csocket.shutdown(socket.SHUT_RDWR)
+        self._csocket.close()
 
     def sslProxy(self, request, hostname):
         self._fsocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -274,8 +274,3 @@ class SSLServer(threading.Thread):
     def stop(self):
         self.isRunning = False
         self._stop.set()
-        if self._ssocket:
-            self._ssocket.close()
-
-        if self._csocket:
-            self._csocket.shutdown(socket.SHUT_RDWR)

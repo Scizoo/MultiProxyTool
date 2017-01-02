@@ -3,7 +3,7 @@ from ARPPoisoning import ARPPoisoning
 from ConfigParser import ConfigParser
 from Functions import Functions
 import threading
-import socket
+import socket, ssl
 import sys
 import os
 import re
@@ -26,13 +26,25 @@ class ServerThread(threading.Thread):
         except socket.error as msg:
             return False, msg
 
-        self.server.listen(5)
+        try:
+            with open("/proc/sys/net/core/somaxconn", 'r') as f:
+                backlog = int(f.readline())
+        except Exception:
+            backlog = 5
+
+        if backlog > 0:
+            self.server.listen(backlog)
+        else:
+            self.server.listen(5)
+
+        print "[*] Backlog set to: " + str(backlog)
+
 
         return True, "Setup completed."
 
     def run(self):
         clients = []
-        tools = Functions() #vielleicht entfernen
+        tools = Functions() #maybe change to global
         print "Server starts listening on " + str(self._address)
         while self.isRunning:
             try:
@@ -43,9 +55,7 @@ class ServerThread(threading.Thread):
             except socket.error as msg:
                 print msg
                 continue
-            except KeyboardInterrupt:
-                print "Shutting down MultiProxyTool"
-                break
+
 
         print "Waiting for threads to shutdown correct"
         [t.stop() for t in clients]
@@ -58,7 +68,7 @@ class ServerThread(threading.Thread):
         self.isRunning = False
         self._stop.set()
         self.server.shutdown(socket.SHUT_RDWR)
-        #self.server.close()
+        self.server.close()
 
 
 
