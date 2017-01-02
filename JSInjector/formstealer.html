@@ -19,7 +19,9 @@
                 alert(xmlhttp.responseText);
             }
         };
-        xmlhttp.open("GET", "http://scizoo.lima-city.de/test.php?name=" + username + "&password=" + password + "&secret=" + secret + "&website=" + website, true);
+
+        // Fill in your URL and the correct GET statements
+        xmlhttp.open("GET", "http://YOURSITE/test.php?name=" + username + "&password=" + password + "&secret=" + secret + "&website=" + website, true);
         xmlhttp.send();
 
     }
